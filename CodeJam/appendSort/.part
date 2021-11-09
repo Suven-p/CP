@@ -1,0 +1,84 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+string toStr(long long num) {
+    stringstream ss;
+    ss << num;
+    return ss.str();
+}
+
+long long toNum(string str) {
+    stringstream ss(str);
+    long long ans;
+    ss >> ans;
+    return ans;
+}
+
+auto len(long long num) {
+    return toStr(num).size();
+}
+
+long long getMin(long long& previous, long long& current) {
+    if (current > previous) {
+        return 0;
+    }
+    long long ans = 0;
+    const string prevstr = toStr(previous);
+    string curstr = toStr(current);
+    string newStr;
+
+    if (prevstr.size() == curstr.size() && previous >= current) {
+        current *= 10;
+        return 1;
+    }
+    else if (curstr.size() < prevstr.size()) {
+        auto difference = prevstr.size() - curstr.size();
+        auto sub = prevstr.substr(0, curstr.size());
+        if (sub == curstr) {
+            auto leftOver = prevstr.substr(curstr.size(), difference); // Copy all characters except last character
+            if (leftOver.find_first_not_of('9') == string::npos) {
+                current *= pow(10, difference+1);
+            }
+            else {
+                newStr = curstr + leftOver;
+                current = toNum(newStr) + 1;
+            }
+        }
+        else if (sub < curstr) {
+            current = current * pow(10, difference);
+        }
+        else if (sub > curstr) {
+            newStr = curstr + string(difference +1, '0');
+            current = toNum(newStr);
+        }
+
+    }
+    // sanity check
+    if (toStr(current).find_first_of(curstr) != 0) {
+        throw "Something went wrong";
+    }
+    ans = toStr(current).size() - curstr.size();
+    return ans;
+
+}
+
+int main() {
+    int T;
+    cin >> T;
+    for (int nt=1; nt<=T; nt++) {
+        int N;
+        cin >> N;
+        long long ans = 0;
+        long long previous = -1;
+        long long current = -1;
+        for (int i=0; i<N; i++) {
+            previous = current;
+            cin >> current;
+            ans += getMin(previous, current);
+            // cout << "Current: " << current << endl;
+        }
+        cout << "Case #" << nt << ": " << ans << endl;
+    }
+
+}

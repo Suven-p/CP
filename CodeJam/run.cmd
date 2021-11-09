@@ -1,0 +1,1 @@
+g++ -o .\database_solution.exe .\database_solution.cpp && py .\interactive_runner.py python .\local_testing_tool.py 0 -- .\database_solution.exe

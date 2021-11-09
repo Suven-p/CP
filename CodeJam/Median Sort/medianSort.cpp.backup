@@ -1,0 +1,205 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int getMedian(int i1, int i2, int i3)
+{
+    cout << i1 << " " << i2 << " " << i3 << endl;
+    int median;
+    std::cin >> median;
+    return median;
+}
+
+int insert(vector<int> &array, int element, int startIndex, int endIndex)
+{
+    int windowSize = endIndex - startIndex + 1;
+    switch (windowSize)
+    {
+    case 1:
+    {
+        array.insert(array.begin() + startIndex, element);
+        return startIndex;
+    }
+    case 2:
+        [[fallthrough]];
+    case 3:
+        {
+            int first = array[startIndex], second = array[startIndex + 1];
+            int med = getMedian(first, element, second);
+            if (med == first)
+            {
+                array.insert(array.begin() + startIndex, element);
+                return startIndex;
+            }
+            else if (med == element)
+            {
+                array.insert(array.begin() + startIndex + 1, element);
+                return startIndex + 1;
+            }
+            else if (med == second)
+            {
+                if ((endIndex == array.size() - 1) && windowSize == 3)
+                {
+                    return insert(array, element, second, endIndex);
+                }
+                array.insert(array.begin() + startIndex + 2, element);
+                return startIndex + 2;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    default:
+        break;
+    }
+    int mid1Index = (endIndex + (2 * startIndex)) / 3;
+    int mid2Index = ((2 * endIndex) + startIndex) / 3;
+    int mid1 = array[mid1Index];
+    int mid2 = array[mid2Index];
+    int med = getMedian(mid1, element, mid2);
+    if (med == mid1)
+    {
+        return insert(array, element, startIndex, mid1Index);
+    }
+    else if (med == mid2)
+    {
+        return insert(array, element, mid2Index, endIndex);
+    }
+    else if (med == element)
+    {
+        return insert(array, element, mid1Index, mid2Index);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+
+vector<int> mergeArray(const vector<int> &arr1, const vector<int> &arr2)
+{
+    const auto &smaller = (arr1.size() < arr2.size()) ? arr1 : arr2;
+    const auto &larger = (arr1.size() >= arr2.size()) ? arr1 : arr2;
+    vector<int> array(larger);
+    int sz = arr1.size() + arr2.size();
+    int second_last_pos = -1, last_pos = -1;
+    bool movingForward = true;
+    for (int i = 0; i < 2 && i < smaller.size(); i++)
+    {
+        auto pos = insert(array, smaller[i], 0, array.size() - 1);
+        second_last_pos = last_pos;
+        last_pos = pos;
+        // if (last_pos <= second_last_pos) second_last_pos++;
+    }
+    for (int i = 2; i < smaller.size(); i++)
+    {
+        int start = 0, end = array.size() - 1;
+        if (last_pos > second_last_pos)
+        {
+            start = last_pos;
+            movingForward = true;
+        }
+        else if (last_pos <= second_last_pos)
+        {
+            end = last_pos;
+            movingForward = false;
+        }
+        int pos;
+        if (start == end)
+        {
+            if (movingForward)
+            {
+                array.insert(array.end(), smaller[i]);
+                pos = array.size() - 1;
+            }
+            else
+            {
+                array.insert(array.begin(), smaller[i]);
+                pos = 0;
+            }
+        }
+        else
+        {
+            pos = insert(array, smaller[i], start, end);
+        }
+        second_last_pos = last_pos;
+        last_pos = pos;
+        // if (last_pos <= second_last_pos) second_last_pos++;
+    }
+    return array;
+}
+
+void sortArray(vector<int> &array, int start = 0, int end = -1)
+{
+    if (end == -1)
+    {
+        end = array.size() - 1;
+    }
+    int midIndex = int((end - start + 1) / 2) + start;
+    if (array.size() < 3)
+    {
+        return;
+    }
+    else if (array.size() == 3)
+    {
+        int median = getMedian(array[0], array[1], array[2]);
+        if (median == array[0])
+        {
+            int temp = array[1];
+            array[1] = array[0];
+            array[0] = temp;
+        }
+        else if (median == array[2])
+        {
+            int temp = array[1];
+            array[1] = array[2];
+            array[2] = temp;
+        }
+        return;
+    }
+    vector<int> array1(array.begin() + start, array.begin() + midIndex);
+    vector<int> array2(array.begin() + midIndex, array.begin() + end + 1);
+    sortArray(array1);
+    sortArray(array2);
+    auto newArray = mergeArray(array1, array2);
+    for (int i = 0; i < newArray.size(); i++)
+    {
+        array[i] = newArray[i];
+    }
+}
+
+int main()
+{
+    // // Debug portions
+    // vector<int> arr = {1,2,3,4,5, 6, 7, 8,9, 10}, arr1 = {3,4,5,2,1}, arr2={7,8,10,6,9};
+    // //sortArray(arr);
+    // arr = mergeArray(arr1, arr2);
+    // return 0;
+
+    int T, N, Q;
+    cin >> T >> N >> Q;
+    for (int nT = 0; nT < T; nT++)
+    {
+        vector<int> array(N, -1);
+        for (int i = 0; i < N; i++)
+        {
+            array[i] = (i + 1);
+        }
+        sortArray(array);
+        for (auto it = array.begin(); it != array.end(); it++)
+        {
+            cout << *it << " ";
+        }
+        cout << endl;
+
+        int result;
+        cin >> result;
+        if (result == -1)
+        {
+            cerr << "Test " << nT + 1 << " failed." << endl;
+            break;
+        }
+    }
+    return 0;
+}

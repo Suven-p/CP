@@ -1,0 +1,39 @@
+Given two nodes u and v,
+ans[u] = sum of length paths starting from node u
+ans[v] = sum of length paths starting from node v
+
+If u and v are neighbouring nodes and the edge connecting
+u and v are removed, then the tree is split into two sub-trees
+one containing u and other containing v.
+If num(x)=number of nodes under including x
+and the trees are u' and v' then
+ans[u] = ans[u'] + ans[v'] + num(v)
+This is because for each node in v' and therefore affecting ans[v']
+is exactly 1 more node away from u.
+
+Similarly,
+ans[v] = ans[u'] + ans[v'] + num(u)
+Therefore, ans[v] - ans[u] = num(u) - num(v)
+
+If u is a child of v,
+num(v) = total nodes(N) - num(u)
+ans[v] - ans[u] = num(u) - {N - num(u)}
+ans[u] = ans[v] - num(u) - (N - num(u))
+
+If the ans[ROOT] is known and num(u) for all u is known then
+sum of length of path from each node can be calculated in O(N) using
+dfs.
+Using dfs and calculating value[a] and num[a] for all nodes where
+value[a] = sum of length of paths from node a to its children
+        = sum of values of its direct children + num(a)
+
+
+
+
+If u is nth ancestor of v then,
+if a direct child 'q' of u and all its subchildren are excluded
+from the sum of length of paths, then
+
+answer = ans[v] - (value[a] + num(a)) - (num(a)+1)*dist(u,v)
+
+where value[a] is sum of length of all paths from a to its children

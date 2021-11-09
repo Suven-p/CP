@@ -1,0 +1,50 @@
+Here given an array of size 2*n. We can see that there are 2 operations to be done at any point:
+Task 1: Reverse (i)th and (i+n)th positions
+Task 2: Reverse (i)th and (i+1)th positions adjacent positions
+
+Observation 1: We can see that executing either one of tasks twice on a array will give same array so they must a
+lways be alternated. So we can either do t1->t2 or t2->t1;
+
+Observation 2: Executing task 1 is similar to dividing array to 2 partition each of size 'n', and
+reversing the first and second subarray.
+
+Assuming that executing t1 followed by t2 will give the correct answer.
+For a array where n=3 and the order is 6,3,2,5,4,1
+
+Executing T1 followed by T2 repeatedly:
+5,4,1,6,3,2
+4,5,6,1,2,3
+1,2,3,4,5,6
+2,1,4,3,6,5
+3,6,5,2,1,4
+6,3,2,5,4,1
+
+Observation 3: We get the same array after applying (T1+T2) three times; ie after six total
+operations.
+
+Observation 4: We can see from the example that doing (T1) followed by T2 will give the original array.
+This means doing (T2) followed by (T1) will also give the same array after six operations.
+(look from below to above; its the result of (T2->T1));
+
+Observation 5: If the number of operations to reach sorted array is 'k' when doing (T1->T2),
+then the number of operations to reach output when doing (T2->T1) is (2n-k).
+
+Observation 6:
+In step one, each element is moved forward by 'n' positions. The 0th element moves to (0+3)=3 index
+1th element moves to 4th index and so on. Assume the array is cyclic.
+In step two, each element in even index moves to a position after it and each element in odd index moves
+to a position before it.
+This can be generalized as:
+Element in ith index after k operations:
+if (i is even and k is odd): ceil(k/2)*n -ceil(k/2) + 1
+if (i is even and k is even): ceil(k/2)*n -ceil(k/2)
+if (i is odd and k is odd): floor(k/2)*n + floor(k/2) -1
+if (i is odd and k is even): floor(k/2)*n + floor(k/2)
+Therefore, we can find the number of operations required to move first index to position,
+if all other elements also move to required positions when the first index is moved to position,
+then the array is sorted.
+
+The final answer is calculated by taking min of number of operations required for (T1->T2) and (2*n - number of operations)
+
+
+
