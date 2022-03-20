@@ -26,12 +26,12 @@
         },
         {
             "type": "cppbuild",
-            "label": "Test cpp files",
+            "label": "Test cpp files2",
             "dependsOrder": "sequence",
             "dependsOn": [
                 "C/C++: g++ custom build active file"
             ],
-            "command": "${fileDirname}/${fileBasenameNoExtension}",
+            "command": "echo ${fileDirname}/${fileBasenameNoExtension}",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
